@@ -60,6 +60,9 @@ This Unity project serves as a prototype for a classic Snake game, with a focus 
 - **Flexible Board Configuration**: The prototype is designed with a square board featuring checkerboard tiles, easily adjustable in the inspector for experimentation. This includes parameters like map resolution, allowing for more or fewer squares for the snake to traverse. Speed, time of speed effects, etc., every important parameter of the game, is there to simplify the testing process. It should also be quite easy to create a Settings screen/scene where the player could change parameters to tweak the game to their liking — which could be very useful in a prototype testing scenario.
 - **Game Manager Dependencies**: All parameters are exposed in the inspector on the game manager object, allowing for quick adjustments. Most of the interchangeable scripts, such as the audio manager, score manager, board generation, etc., are decoupled and implemented with interfaces. This approach allows for fast changes during the prototyping phase and makes it easier to integrate the game into a larger application.
 
+![Local Image](/gameScreenRec/Screen_snake.png)
+![Local Image](/gameScreenRec/gameView.png)
+
 ## Conclusion
 
 In conclusion, this Snake game prototype in Unity provides a solid foundation for experimentation and iteration. The emphasis on simplicity and flexibility, coupled with thoughtful design considerations, ensures a prototype that can easily adapt to different configurations. As the project progresses, further considerations, such as adopting a DI framework, can be explored to maintain clean and scalable code. 
