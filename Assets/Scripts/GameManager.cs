@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace SnakeGame
 {
@@ -16,6 +17,9 @@ namespace SnakeGame
         [SerializeField] private float _darkTileAlpha = .8f;
         private IBoardBuilder _boardBuilder;
         private SpriteRenderer[,] _boardTiles;
+        [SerializeField] private BoardItemsManager _boardItemsManager;
+        [SerializeField] private int _initialNumberOfInteractiveItems = 5;
+        [SerializeField] private int _minDistanceFromNewItemsToSnakesHead = 1;
 
         [Space(10)]
         [Header("Snake Controller Setup")]
@@ -23,7 +27,9 @@ namespace SnakeGame
         [SerializeField] private int _startTileRowIndex;
         [SerializeField] private int _startTileColumnIndex;
         [SerializeField] private Direction _startHeadDirection;
-        [SerializeField] private float _snakeInitialSpeed = 1f;
+        [SerializeField] private float _snakeInitialSpeed = 3f;
+        [SerializeField] private float _snakeSpeedChangeTime = .5f;
+        [SerializeField] private float _snakeSpeedChangeAmount = 1.5f; // x times faster
 
         [Space(10)]
         [Header("Input System")]
@@ -36,8 +42,14 @@ namespace SnakeGame
         private IAudioController _audioController;
         [SerializeField] private float _backgroundMusicVolume = .5f;
 
+        [Space(10)]
+        [Header("Score Manager")]
+        [SerializeField] private ScoreManager _scoreManagerImplementation;
+        private IScoreManager _scoreManager;
+
         private void Start()
         {
+            _scoreManager = _scoreManagerImplementation ?? throw new System.NullReferenceException("ScoreManagerImplementation is not assigned!");
             _audioController = _audioControllerImplementation ?? throw new System.NullReferenceException("AudioControllerImplementation is not assigned!");
             _audioController.PlayBackgroundLoop(_backgroundMusicVolume);
 
@@ -45,12 +57,23 @@ namespace SnakeGame
             _boardTiles = _boardBuilder.InitializeBoard(
                 _board, _boardSize, _lightTile, _darkTile, _lightTileAlpha, _darkTileAlpha);
 
-            _snakeController.Initialize(_boardTiles, _startTileRowIndex, 
-                _startTileColumnIndex, _startHeadDirection);
+
+            _snakeController.Initialize(_boardTiles, _startTileRowIndex,
+                _startTileColumnIndex, _startHeadDirection,
+                _snakeSpeedChangeTime, _snakeSpeedChangeAmount);
+
+            _boardItemsManager.InitializeBoardItems(_boardTiles, _snakeController,
+                _initialNumberOfInteractiveItems, _minDistanceFromNewItemsToSnakesHead, _audioController);
+
             _snakeController.StartSnakeMovement(_snakeInitialSpeed);
 
             _inputController.OnDirectionKeyDown += DirectionInput;
             _inputController.OnDirectionUIButtonDown += DirectionUIButtonInput;
+
+            _scoreManager.InitializeScoreBoard();
+
+            _snakeController.OnSizeChange += AddPoints;
+            _snakeController.OnSnakeDead += GameOver;
         }
 
         /// <summary>
@@ -94,10 +117,25 @@ namespace SnakeGame
              //_snakeController.SetHeadOrientation(direction);
         }
 
-        // DEBUG
-        private void AddSegment()
+        private void AddPoints(int points)
         {
-            _snakeController.AddSegment(add: 1);
+            _scoreManager.AddPoints(points);
         }
+
+        private void GameOver()
+        {
+            _audioController.PlayGameOverSound();
+
+            StartCoroutine(ReloadSceneAfterDelay(delay: 2f));
+        }
+
+        private IEnumerator ReloadSceneAfterDelay(float delay)
+        {
+            // Temporary solution until a menu is implemented
+
+            yield return new WaitForSeconds(delay);
+            SceneManager.LoadScene("GameScene");
+        }
+
     }
 }

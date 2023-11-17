@@ -31,7 +31,7 @@ public class MovementTest
         Direction startHeadDirection = Direction.Up;
         // Act
         snakeController.Initialize(gameBoard, startTileRowIndex: 0, startTileColumnIndex: 0,
-            startHeadDirection: startHeadDirection);
+            startHeadDirection: startHeadDirection, 1f, 1f);
 
         // Assert
         Assert.NotNull(snakeController.HeadPositionIndices);
@@ -61,7 +61,7 @@ public class MovementTest
         Direction startHeadDirection = Direction.Up;
         // Act
         snakeController.Initialize(gameBoard, startTileRowIndex: 0, startTileColumnIndex: 0,
-            startHeadDirection: startHeadDirection);
+            startHeadDirection: startHeadDirection, 1f, 1f);
 
         // Act
         snakeController.MoveHead(Direction.Left);
@@ -93,10 +93,10 @@ public class MovementTest
 
         Direction startHeadDirection = Direction.Up;
         snakeController.Initialize(gameBoard, startTileRowIndex: 0, startTileColumnIndex: 0,
-            startHeadDirection: startHeadDirection);
+            startHeadDirection: startHeadDirection, 1f, 1f);
 
         // Act
-        snakeController.AddSegment(1);
+        snakeController.AddSegment();
         yield return null; // Wait for the next frame
 
         // Assert
