@@ -42,5 +42,24 @@ A simple game, based on well known comcept of "Snake" game ([Snake game - Wikipe
 - The game should be written in a way that to be fairly easy to port to other platforms.
 - The basic mechanics of the snake game will remain unchanged and will never lose its initial concept or transform into any other type of game.
 
+## Unity implementation and considerations
+This Unity project serves as a prototype for a classic Snake game, with a focus on simplicity, flexibility, and extensibility. Below are key insights into the implementation, bearing in mind the prototype nature of the game.
 
-## Unity
+### Used Assets and Packages
+- **Canva**: Some basic sprites were created using Canva.
+- **Pixabay Sounds**: Free-to-use sounds from Pixabay to make game more playable even at prototype stage.
+- **DOTween**: Adds smooth animation and tweening capabilities, enhancing the visual prototype.
+- **New Unity Input System**: Implements the new Unity Input System for improved input handling.
+
+## Assets, Packages, custom solutions for future
+- **Localization Asset:** Localization package (i.e. I2 Localization or custom solution) to easily store and manage texts outside of the code, supporting various language versions etc.
+- **Dependency Injector (like Zenject):** In the future, implementing a robust Dependency Injection (DI) framework such as Zenject could be considered. This would facilitate effective dependency management, making it easier for testing, interface changes and overall project scalability or the ability to quickly swap implementations with more scenes sharing scripts in the project.
+
+### Design Considerations
+
+- **Flexible Board Configuration**: The prototype is designed with a square board featuring checkerboard tiles, easily adjustable in the inspector for experimentation. This includes parameters like map resolution, allowing for more or fewer squares for the snake to traverse. Speed, time of speed effects, etc., every important parameter of the game, is there to simplify the testing process. It should also be quite easy to create a Settings screen/scene where the player could change parameters to tweak the game to their liking — which could be very useful in a prototype testing scenario.
+- **Game Manager Dependencies**: All parameters are exposed in the inspector on the game manager object, allowing for quick adjustments. Most of the interchangeable scripts, such as the audio manager, score manager, board generation, etc., are decoupled and implemented with interfaces. This approach allows for fast changes during the prototyping phase and makes it easier to integrate the game into a larger application.
+
+## Conclusion
+
+In conclusion, this Snake game prototype in Unity provides a solid foundation for experimentation and iteration. The emphasis on simplicity and flexibility, coupled with thoughtful design considerations, ensures a prototype that can easily adapt to different configurations. As the project progresses, further considerations, such as adopting a DI framework, can be explored to maintain clean and scalable code. 
