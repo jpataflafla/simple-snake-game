@@ -240,37 +240,16 @@ namespace SnakeGame
 
             for (int i = 0; i < n / 2; i++)
             {
-                //var tmpOrientation = _snake[n - 1 - i].SegmentOrientation;
-                //_snake[n - 1 - i].SetOrientation(_snake[i].SegmentOrientation);
-                //_snake[i].SetOrientation(tmpOrientation);
-
-                //if (i == 0) // head and tail
-                //{
-                //    var tmpIndices = _snake[0].Indices;
-                //    _snake[0].SetPosition(_snake[^1].Indices);
-                //    _snake[^1].SetPosition(tmpIndices);
-
-                //    //var tmpOrientation = _snake[0].SegmentOrientation;
-                //    //_snake[0].SetOrientation(_snake[^1].SegmentOrientation);
-                //    //_snake[^1].SetOrientation(tmpOrientation);
-
-                //    continue;
-                //}
-
-                //// Swap body elements to reverse the list
-                //(_snake[n - 1 - i], _snake[i]) = (_snake[i], _snake[n - 1 - i]);
-
                 var tmpIndices = _snake[n - 1 - i].Indices;
                 _snake[n - 1 - i].SetPosition(_snake[i].Indices);
                 _snake[i].SetPosition(tmpIndices);
 
                 var tmpOrientation = _snake[n - 1 - i].SegmentOrientation;
-                _snake[n - 1 - i].SetOrientation(_snake[i].SegmentOrientation);
-                _snake[i].SetOrientation(tmpOrientation);
+                _snake[n - 1 - i].SetOrientation(GetOppositeDirection(_snake[i].SegmentOrientation));
+                _snake[i].SetOrientation(GetOppositeDirection(tmpOrientation));
             }
-            MoveHead(GetOppositeDirection(_snake[0].SegmentOrientation));
-            _snake[0].SetOrientation(GetOppositeDirection(_snake[0].SegmentOrientation));
-            _snake[^1].SetOrientation(GetOppositeDirection(_snake[^1].SegmentOrientation));
+
+            MoveHead((_snake[0].SegmentOrientation));
             StartSnakeMovement(_initialSnakeSpeed);
         }
 
