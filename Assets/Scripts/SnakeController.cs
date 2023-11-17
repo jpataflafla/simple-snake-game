@@ -1,99 +1,95 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading;
 using UnityEngine;
 
-public enum Direction { Up, Down, Right, Left };
-
-public class SnakeController : MonoBehaviour
+namespace SnakeGame
 {
-    public Vector2Int HeadPositionIdices { get; private set; }
-    public Direction HeadDirection { get; private set; }
-
-    [SerializeField] private SpriteRenderer _head;
-    [SerializeField] private SpriteRenderer _tail;
-
-    private SpriteRenderer[,] _boardTiles;
-
-    public void Initialize(SpriteRenderer[,] boardTiles, int startTileRowIndex, int startTileColumnIndex, Direction startHeadDirection)
+    public class SnakeController : MonoBehaviour
     {
-        _boardTiles = boardTiles;
+        public Vector2Int HeadPositionIndices => _snake[0].Indices;
+        public Direction HeadDirection => _snake[0].SegmentOrientation;
 
-        // set head size
-        var currentSize = _head.bounds.size.x;
-        var desiredSize = boardTiles[0, 0].bounds.size.x;
-        var spriteScale = currentSize != 0 ? desiredSize / currentSize : currentSize;
-        
-        _head.transform.localScale = new Vector3(spriteScale, spriteScale, 1f);
+        [SerializeField] private SpriteRenderer _headSpriteRenderer;
+        [SerializeField] private SpriteRenderer _bodySpriteRenderer;
+        [SerializeField] private SpriteRenderer _tailSpriteRenderer;
 
-        // set initial position
-        _head.transform.position = boardTiles[startTileRowIndex, startTileColumnIndex].transform.position;
-        HeadPositionIdices = new Vector2Int(startTileRowIndex, startTileColumnIndex);
+        private List<SnakeSegment> _snake;
+        private SpriteRenderer[,] _boardTiles;
 
-        UpdateHeadOrientation(startHeadDirection);
-    }
-
-    public void MoveHead(Direction headDirection)
-    {
-        Vector2Int newHeadPositionIndices = HeadPositionIdices;
-
-        // (0, 0) -> left bottom corner
-        switch (headDirection)
+        public void Initialize(SpriteRenderer[,] boardTiles, int startTileRowIndex, 
+            int startTileColumnIndex, Direction startHeadDirection)
         {
-            case Direction.Up:
-                newHeadPositionIndices.y++;
-                if(newHeadPositionIndices.y >= _boardTiles.GetLength(1))
-                {
-                    newHeadPositionIndices.y -= _boardTiles.GetLength(1);
-                }
-                break;
-            case Direction.Down:
-                newHeadPositionIndices.y--;
-                if (newHeadPositionIndices.y < 0)
-                {
-                    newHeadPositionIndices.y += _boardTiles.GetLength(1);
-                }
-                break;
-            case Direction.Left:
-                newHeadPositionIndices.x--;
-                if (newHeadPositionIndices.x < 0)
-                {
-                    newHeadPositionIndices.x += _boardTiles.GetLength(0);
-                }
-                break;
-            case Direction.Right:
-                newHeadPositionIndices.x++;
-                if (newHeadPositionIndices.x >= _boardTiles.GetLength(0))
-                {
-                    newHeadPositionIndices.x -= _boardTiles.GetLength(0);
-                }
-                break;
+            _boardTiles = boardTiles;
+            var headPositionIndices = new Vector2Int(startTileRowIndex, startTileColumnIndex);
+
+            // build snake and setup initial position
+            _snake = new List<SnakeSegment>() {
+                new SnakeSegment(_headSpriteRenderer, indices: headPositionIndices,
+                                startHeadDirection, boardTiles),
+                new SnakeSegment(_bodySpriteRenderer, indices: headPositionIndices, 
+                                startHeadDirection, boardTiles),
+                new SnakeSegment(_tailSpriteRenderer, indices: headPositionIndices, 
+                                startHeadDirection, boardTiles),
+            };
         }
 
-
-        HeadPositionIdices = newHeadPositionIndices;
-        HeadDirection = headDirection;
-        _head.transform.position = _boardTiles[newHeadPositionIndices.x, newHeadPositionIndices.y].transform.position;
-
-    }
-
-    private void UpdateHeadOrientation(Direction newDirection)
-    {
-        switch (newDirection)
+        public void MoveHead(Direction headDirection)
         {
-            case Direction.Up:
-                _head.transform.rotation = Quaternion.Euler(0f, 0f, 0f);
-                break;
-            case Direction.Down:
-                _head.transform.rotation = Quaternion.Euler(0f, 0f, 180f);
-                break;
-            case Direction.Left:
-                _head.transform.rotation = Quaternion.Euler(0f, 0f, 90f);
-                break;
-            case Direction.Right:
-                _head.transform.rotation = Quaternion.Euler(0f, 0f, -90f);
-                break;
+            var previousIndices = _snake[0].Indices;
+            var previousOrientation = _snake[0].SegmentOrientation;
+            _snake[0].MoveSegment(headDirection);
+
+            for (int i = 1; i < _snake.Count; i++)
+            {
+                var currentIndices = _snake[i].Indices;
+                var currentOrientation = _snake[i].SegmentOrientation;
+
+                if (previousIndices == currentIndices) break;
+
+                if (i == _snake.Count - 1) // tail
+                {
+                    _snake[i].SetPosition(previousIndices);
+                    _snake[i].SetOrientation(_snake[i - 1].SegmentOrientation);
+                    continue;
+                }
+
+                // Move the current segment to the position of the segment before it
+                _snake[i].SetPosition(previousIndices);
+                _snake[i].SetOrientation(previousOrientation);
+
+
+                previousIndices = currentIndices;
+                previousOrientation = currentOrientation;
+            }
+        }
+
+        public void SetHeadOrientation(Direction newOrientation)
+        {
+            //SetSnakeSegmentOrientation(newOrientation, _head);
+            _snake[0].SetOrientation(newOrientation);
+        }
+
+        public void AddSegment(int add)
+        {
+            var tail = _snake[^1];
+            var body = _snake[^2];
+
+            var newSegment = new SnakeSegment(GetBodySegmentSpriteRenderer(), 
+                body.Indices, body.SegmentOrientation, _boardTiles);
+
+            _snake[^1] = newSegment;
+            _snake.Add(tail);
+            tail.SpriteRenderer.transform.SetAsLastSibling();
+        }
+
+        // TODO pool
+        private SpriteRenderer GetBodySegmentSpriteRenderer()
+        {
+            var spriteRenderer = Instantiate(_bodySpriteRenderer.transform.gameObject, parent: _bodySpriteRenderer.transform.parent).GetComponent<SpriteRenderer>();
+            spriteRenderer.transform.localScale = Vector3.one;
+            return spriteRenderer;
         }
     }
-
 }
