@@ -1372,19 +1372,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _board: {fileID: 372560330}
-  _boardSize: 12
+  _boardSize: 20
   _lightTile: {fileID: 21300000, guid: 5d40b58236e488b4e85a567cea9caaff, type: 3}
   _lightTileAlpha: 0.04
   _darkTile: {fileID: 21300000, guid: 5d40b58236e488b4e85a567cea9caaff, type: 3}
   _darkTileAlpha: 0.08
   _boardItemsManager: {fileID: 543399578}
-  _initialNumberOfInteractiveItems: 5
+  _initialNumberOfInteractiveItems: 11
   _minDistanceFromNewItemsToSnakesHead: 1
   _snakeController: {fileID: 368974448}
   _startTileRowIndex: 0
   _startTileColumnIndex: 0
   _startHeadDirection: 2
-  _snakeInitialSpeed: 3
+  _snakeInitialSpeed: 4
   _snakeSpeedChangeTime: 3
   _snakeSpeedChangeAmount: 1.5
   _inputController: {fileID: 1675453603}
