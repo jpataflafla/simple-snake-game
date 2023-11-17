@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Xml.Serialization;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 namespace SnakeGame
 {
@@ -37,23 +38,23 @@ namespace SnakeGame
         private float _snakeSpeedChangeTime = 1f;
         private float _snakeSpeedChangeAmount = 1.5f;
 
-        public void Initialize(SpriteRenderer[,] boardTiles, int startTileRowIndex, 
+        public void Initialize(SpriteRenderer[,] boardTiles, int startTileRowIndex,
             int startTileColumnIndex, Direction startHeadDirection,
             float snakeSpeedChangeTime, float snakeSpeedChangeAmount)
         {
             _snakeSpeedChangeTime = snakeSpeedChangeTime;
             _snakeSpeedChangeAmount = snakeSpeedChangeAmount;
 
-           _boardTiles = boardTiles;
+            _boardTiles = boardTiles;
             var headPositionIndices = new Vector2Int(startTileRowIndex, startTileColumnIndex);
 
             // build snake and setup initial position
             _snake = new List<SnakeSegment>() {
                 new SnakeSegment(_headSpriteRenderer, indices: headPositionIndices,
                                 startHeadDirection, boardTiles),
-                new SnakeSegment(_bodySpriteRenderer, indices: headPositionIndices, 
+                new SnakeSegment(_bodySpriteRenderer, indices: headPositionIndices,
                                 startHeadDirection, boardTiles),
-                new SnakeSegment(_tailSpriteRenderer, indices: headPositionIndices, 
+                new SnakeSegment(_tailSpriteRenderer, indices: headPositionIndices,
                                 startHeadDirection, boardTiles),
             };
 
@@ -98,9 +99,9 @@ namespace SnakeGame
 
         public bool IsAnySnakeSegmentAtPosition(Vector2Int position)
         {
-            foreach(var segment in _snake)
+            foreach (var segment in _snake)
             {
-                if(segment.Indices == position) return true;
+                if (segment.Indices == position) return true;
             }
             return false;
         }
@@ -139,17 +140,31 @@ namespace SnakeGame
             _snakeShouldMove = true;
             while (_snakeShouldMove)
             {
-                yield return new WaitForSeconds(_snakeSpeed <= 0 ? 1f : 1f/_snakeSpeed);
-                yield return new WaitForEndOfFrame();//wait for direction changes
+                yield return new WaitForSeconds(_snakeSpeed <= 0 ? 1f : 1f / _snakeSpeed);
+                yield return new WaitForEndOfFrame(); //wait for direction changes
 
                 MoveSnake(_nextMoveHeadDirection);
                 _nextMoveHeadDirection = HeadDirection;
-                //yield return null;
-            }
 
-            // things to do after stop
+                if (IsEatingItself())
+                {
+                    GameOver();
+                }
+            }
         }
         #endregion SnakeAutiomaticMovement
+
+        public bool IsEatingItself()
+        {
+            for (int i = 1; i < _snake.Count; i++)
+            {
+                if (_snake[0].Indices == _snake[i].Indices)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
 
         #region SnakeActions
         public void AddSegment()
@@ -157,7 +172,7 @@ namespace SnakeGame
             var tail = _snake[^1];
             var body = _snake[^2];
 
-            var newSegment = new SnakeSegment(GetBodySegmentSpriteRenderer(), 
+            var newSegment = new SnakeSegment(GetBodySegmentSpriteRenderer(),
                 body.Indices, body.SegmentOrientation, _boardTiles);
 
             _snake[^1] = newSegment;
@@ -169,7 +184,7 @@ namespace SnakeGame
 
         public void RemoveSegment()
         {
-            if(_snake.Count <= _minSnakeSegments)
+            if (_snake.Count <= _minSnakeSegments)
             {
                 GameOver();
                 return;
@@ -178,7 +193,7 @@ namespace SnakeGame
             var body = _snake[^2];
             _snake[^2] = tail;
             Destroy(body.SpriteRenderer.gameObject);
-            _snake.RemoveAt(_snake.Count - 1);           
+            _snake.RemoveAt(_snake.Count - 1);
             tail.SpriteRenderer.transform.SetAsLastSibling();
 
             OnSizeChange?.Invoke(-1);
@@ -186,13 +201,13 @@ namespace SnakeGame
 
         private void GameOver()
         {
-            StopSnakeMovement( forceStopCoroutine: true);
+            StopSnakeMovement(forceStopCoroutine: true);
             OnSnakeDead?.Invoke();
         }
 
         public void SpeedUpAction()
         {
-            if(speedChange != null)
+            if (speedChange != null)
             {
                 StopCoroutine(speedChange);
             }
@@ -207,7 +222,7 @@ namespace SnakeGame
                 StopCoroutine(speedChange);
             }
             ChangeSnakeSpeed(_initialSnakeSpeed);
-            speedChange = StartCoroutine(SpeedChange(_snakeSpeedChangeTime, 1f/_snakeSpeedChangeAmount));
+            speedChange = StartCoroutine(SpeedChange(_snakeSpeedChangeTime, 1f / _snakeSpeedChangeAmount));
         }
 
         private IEnumerator SpeedChange(float snakeSpeedChangeTime, float snakeSpeedChangeAmount)
@@ -219,25 +234,44 @@ namespace SnakeGame
 
         public void HeadTailSwapAction()
         {
+            StopSnakeMovement(forceStopCoroutine: true);
+
             int n = _snake.Count;
-            
+
             for (int i = 0; i < n / 2; i++)
             {
-                if(i==0) //head and tail
-                {
-                    var tmp = _snake[0].Indices;
-                    _snake[0].SetPosition(_snake[^1].Indices);
-                    _snake[^1].SetPosition(tmp);
-                    continue;
-                }
+                //var tmpOrientation = _snake[n - 1 - i].SegmentOrientation;
+                //_snake[n - 1 - i].SetOrientation(_snake[i].SegmentOrientation);
+                //_snake[i].SetOrientation(tmpOrientation);
 
-                // Swap body elements to reverse the list
-                (_snake[n - 1 - i], _snake[i]) = (_snake[i], _snake[n - 1 - i]);
+                //if (i == 0) // head and tail
+                //{
+                //    var tmpIndices = _snake[0].Indices;
+                //    _snake[0].SetPosition(_snake[^1].Indices);
+                //    _snake[^1].SetPosition(tmpIndices);
+
+                //    //var tmpOrientation = _snake[0].SegmentOrientation;
+                //    //_snake[0].SetOrientation(_snake[^1].SegmentOrientation);
+                //    //_snake[^1].SetOrientation(tmpOrientation);
+
+                //    continue;
+                //}
+
+                //// Swap body elements to reverse the list
+                //(_snake[n - 1 - i], _snake[i]) = (_snake[i], _snake[n - 1 - i]);
+
+                var tmpIndices = _snake[n - 1 - i].Indices;
+                _snake[n - 1 - i].SetPosition(_snake[i].Indices);
+                _snake[i].SetPosition(tmpIndices);
+
+                var tmpOrientation = _snake[n - 1 - i].SegmentOrientation;
+                _snake[n - 1 - i].SetOrientation(_snake[i].SegmentOrientation);
+                _snake[i].SetOrientation(tmpOrientation);
             }
-
-            MoveHead(GetOppositeDirection(_snake[^1].SegmentOrientation));
-            _snake[^1].SetOrientation(HeadDirection);
-
+            MoveHead(GetOppositeDirection(_snake[0].SegmentOrientation));
+            _snake[0].SetOrientation(GetOppositeDirection(_snake[0].SegmentOrientation));
+            _snake[^1].SetOrientation(GetOppositeDirection(_snake[^1].SegmentOrientation));
+            StartSnakeMovement(_initialSnakeSpeed);
         }
 
 

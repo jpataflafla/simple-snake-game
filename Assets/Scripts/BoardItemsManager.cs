@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace SnakeGame
@@ -47,7 +48,10 @@ namespace SnakeGame
                 }
             }
             _interactiveItems.Remove(itemToDispose);
-            itemToDispose?.MakeItemDisappear(); // could be returned to a pool
+            if( itemToDispose != null )
+            {
+                itemToDispose.MakeItemDisappear(); // could be returned to a pool
+            }
         }
 
         private void TryToGenerateInteractiveItems(int maxNumberOfItemsOnBoard, int minDistanceFromSnakesHead = 1)
@@ -113,7 +117,9 @@ namespace SnakeGame
                     Random.Range(0, _boardTiles.GetLength(0)),
                     Random.Range(0, _boardTiles.GetLength(1))
                 );
-            } while (_snakeController.IsAnySnakeSegmentAtPosition(randomPosition));
+            } while (
+            _interactiveItems.Any(item => item.ItemPositionIndieces == randomPosition)
+            || _snakeController.IsAnySnakeSegmentAtPosition(randomPosition));
 
             return randomPosition;
         }
