@@ -2,14 +2,18 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
+using System.Xml.Serialization;
 using UnityEngine;
 
 namespace SnakeGame
 {
     public class SnakeController : MonoBehaviour
     {
+        public int SnakeLength => _snake.Count;
         public Vector2Int HeadPositionIndices => _snake[0].Indices;
         public Direction HeadDirection => _snake[0].SegmentOrientation;
+
+        private Direction _nextMoveHeadDirection;
 
         [SerializeField] private SpriteRenderer _headSpriteRenderer;
         [SerializeField] private SpriteRenderer _bodySpriteRenderer;
@@ -17,6 +21,12 @@ namespace SnakeGame
 
         private List<SnakeSegment> _snake;
         private SpriteRenderer[,] _boardTiles;
+
+
+        private Coroutine _snakeMovementLoop;
+        private bool _snakeShouldMove;
+        private float _snakeSpeed = 1f;
+
 
         public void Initialize(SpriteRenderer[,] boardTiles, int startTileRowIndex, 
             int startTileColumnIndex, Direction startHeadDirection)
@@ -33,9 +43,15 @@ namespace SnakeGame
                 new SnakeSegment(_tailSpriteRenderer, indices: headPositionIndices, 
                                 startHeadDirection, boardTiles),
             };
+
         }
 
         public void MoveHead(Direction headDirection)
+        {
+            _nextMoveHeadDirection = headDirection;
+        }
+
+        private void MoveSnake(Direction headDirection)
         {
             var previousIndices = _snake[0].Indices;
             var previousOrientation = _snake[0].SegmentOrientation;
@@ -65,11 +81,52 @@ namespace SnakeGame
             }
         }
 
-        public void SetHeadOrientation(Direction newOrientation)
+        //public void SetHeadOrientation(Direction newOrientation)
+        //{
+        //    //SetSnakeSegmentOrientation(newOrientation, _head);
+        //    _snake[0].SetOrientation(newOrientation);
+        //}
+
+        #region SnakeAutomaticMovement
+        public void ChangeSnakeSpeed(float newSpeed)
         {
-            //SetSnakeSegmentOrientation(newOrientation, _head);
-            _snake[0].SetOrientation(newOrientation);
+            _snakeSpeed = Mathf.Max(newSpeed, 0f);
         }
+
+        public void StartSnakeMovement(float initialSpeed)
+        {
+            StopSnakeMovement(forceStopCoroutine: true);
+            _snakeSpeed = initialSpeed;
+            _snakeMovementLoop = StartCoroutine(SnakeMovementLoop());
+        }
+
+        private void StopSnakeMovement(bool forceStopCoroutine = false)
+        {
+            _snakeShouldMove = false;
+
+            if (forceStopCoroutine && _snakeMovementLoop != null)
+            {
+                StopCoroutine(_snakeMovementLoop);
+            }
+        }
+
+        private IEnumerator SnakeMovementLoop()
+        {
+            _snakeShouldMove = true;
+            while (_snakeShouldMove)
+            {
+                yield return new WaitForSeconds(_snakeSpeed <= 0 ? 1f : 1f/_snakeSpeed);
+                yield return new WaitForEndOfFrame();//wait for direction changes
+
+                MoveSnake(_nextMoveHeadDirection);
+                _nextMoveHeadDirection = HeadDirection;
+                //yield return null;
+            }
+
+            // things to do after stop
+        }
+        #endregion SnakeAutiomaticMovement
+
 
         public void AddSegment(int add)
         {

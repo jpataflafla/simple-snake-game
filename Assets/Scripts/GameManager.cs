@@ -23,6 +23,7 @@ namespace SnakeGame
         [SerializeField] private int _startTileRowIndex;
         [SerializeField] private int _startTileColumnIndex;
         [SerializeField] private Direction _startHeadDirection;
+        [SerializeField] private float _snakeInitialSpeed = 1f;
 
         [Space(10)]
         [Header("Input System")]
@@ -44,7 +45,9 @@ namespace SnakeGame
             _boardTiles = _boardBuilder.InitializeBoard(
                 _board, _boardSize, _lightTile, _darkTile, _lightTileAlpha, _darkTileAlpha);
 
-            _snakeController.Initialize(_boardTiles, _startTileRowIndex, _startTileColumnIndex, _startHeadDirection);
+            _snakeController.Initialize(_boardTiles, _startTileRowIndex, 
+                _startTileColumnIndex, _startHeadDirection);
+            _snakeController.StartSnakeMovement(_snakeInitialSpeed);
 
             _inputController.OnDirectionKeyDown += DirectionInput;
             _inputController.OnDirectionUIButtonDown += DirectionUIButtonInput;
