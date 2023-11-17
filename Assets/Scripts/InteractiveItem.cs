@@ -40,7 +40,7 @@ namespace SnakeGame
             _thisSegment = new TileSizedMovableSegment(_spriteRenderer, indices,
                 initialOrientation, boardTiles);
 
-            _spriteRenderer.sprite = _itemSprites[UnityEngine.Random.Range(0, _itemSprites.Length - 1)];
+            _spriteRenderer.sprite = _itemSprites[UnityEngine.Random.Range(0, _itemSprites.Length)];
 
             _isInitialized = true;
             _interactionCompleted = false;

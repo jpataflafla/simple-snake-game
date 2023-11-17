@@ -9,7 +9,7 @@ public class ScoreManager : MonoBehaviour, IScoreInfoManager
     [SerializeField] private TextMeshProUGUI _scoreText;
     [SerializeField] private TextMeshProUGUI _bestScoreText;
 
-    private readonly float _actionTextTime = 1f;
+    private readonly float _actionTextTime = 2f;
     private int _score = 0;
 
     private const string BestScorePlayerPrefsKey = "BestScore";

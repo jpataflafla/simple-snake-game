@@ -28,7 +28,6 @@ namespace SnakeGame
 
             _maxNumberOfItemsOnBoard = maxNumberOfItemsOnBoard;
             _minDistanceFromSnakesHead = minDistanceFromSnakesHead;
-            //TryToGenerateInteractiveItems(maxNumberOfItemsOnBoard, minDistanceFromSnakesHead);
 
             _isInitialized = true;
         }
@@ -109,7 +108,7 @@ namespace SnakeGame
 
         private Vector2Int GetRandomEmptyPosition()
         {
-            // Generate a random position that is not occupied by the snake
+            // Generate a random position that is not occupied by the snake or items
             Vector2Int randomPosition;
             do
             {
