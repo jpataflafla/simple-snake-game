@@ -851,6 +851,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 472e6cfc28b6c3f4786149a2b65d3a88, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _backgroundClip: {fileID: 8300000, guid: 22206715a3cc52644bc555fff2b079dd, type: 3}
+  _edibleItemSound: {fileID: 8300000, guid: a6903bfd90b1eeb41b42034c2e483b9d, type: 3}
+  _inedibleItemSound: {fileID: 0}
+  _speedUpItemSound: {fileID: 0}
+  _slowDownItemSound: {fileID: 0}
+  _headTailSwapSound: {fileID: 0}
+  _gameOverSound: {fileID: 8300000, guid: 98d978b66841be542acfb370c8924d91, type: 3}
 --- !u!1 &1113534696
 GameObject:
   m_ObjectHideFlags: 0
@@ -1203,7 +1210,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _board: {fileID: 372560330}
-  _boardSize: 4
+  _boardSize: 12
   _lightTile: {fileID: 21300000, guid: 5d40b58236e488b4e85a567cea9caaff, type: 3}
   _lightTileAlpha: 0.04
   _darkTile: {fileID: 21300000, guid: 5d40b58236e488b4e85a567cea9caaff, type: 3}
@@ -1213,6 +1220,8 @@ MonoBehaviour:
   _startTileColumnIndex: 0
   _startHeadDirection: 2
   _inputController: {fileID: 1675453603}
+  _audioControllerImplementation: {fileID: 955269719}
+  _backgroundMusicVolume: 0.5
 --- !u!1 &1573458915
 GameObject:
   m_ObjectHideFlags: 0
@@ -1339,7 +1348,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1633309541}
   m_Layer: 0
-  m_Name: Systems/Do not destroy on load
+  m_Name: Systems And Do not destroy on load
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

@@ -29,8 +29,17 @@ namespace SnakeGame
         [SerializeField] private InputController _inputController;
 
 
+        [Space(10)]
+        [Header("Audio System")]
+        [SerializeField] private AudioController _audioControllerImplementation;
+        private IAudioController _audioController;
+        [SerializeField] private float _backgroundMusicVolume = .5f;
+
         private void Start()
         {
+            _audioController = _audioControllerImplementation ?? throw new System.NullReferenceException("AudioControllerImplementation is not assigned!");
+            _audioController.PlayBackgroundLoop(_backgroundMusicVolume);
+
             _boardBuilder = new BoardBuilder();
             _boardTiles = _boardBuilder.InitializeBoard(
                 _board, _boardSize, _lightTile, _darkTile, _lightTileAlpha, _darkTileAlpha);
@@ -45,8 +54,8 @@ namespace SnakeGame
         /// When the left/right UI buttons are used, the direction changes 
         /// relative to the current rotation of the head, not the orientation of the map.
         /// </summary>
-        /// <param name="direction"></param>
-        private void DirectionUIButtonInput(Direction direction)
+        /// <param name="pressedDirection"></param>
+        private void DirectionUIButtonInput(Direction pressedDirection)
         {
             Dictionary<(Direction, Direction), Direction> rotationMapping = 
                 new Dictionary<(Direction, Direction), Direction>
@@ -64,12 +73,12 @@ namespace SnakeGame
 
             var currentOrientation = _snakeController.HeadDirection;
 
-            if(rotationMapping.TryGetValue((currentOrientation, direction), out var newDirection))
+            if(rotationMapping.TryGetValue((currentOrientation, pressedDirection), out var correctDirection))
             {
-                _snakeController.SetHeadOrientation(newDirection);
-            }
+                //_snakeController.SetHeadOrientation(correctDirection);
+                _snakeController.MoveHead(correctDirection);
 
-            AddSegment();
+            }
         }
 
         /// <summary>
