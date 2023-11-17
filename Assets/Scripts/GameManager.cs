@@ -45,7 +45,7 @@ namespace SnakeGame
         [Space(10)]
         [Header("Score Manager")]
         [SerializeField] private ScoreManager _scoreManagerImplementation;
-        private IScoreManager _scoreManager;
+        private IScoreInfoManager _scoreManager;
 
         private void Start()
         {
@@ -74,6 +74,7 @@ namespace SnakeGame
 
             _snakeController.OnSizeChange += AddPoints;
             _snakeController.OnSnakeDead += GameOver;
+            _snakeController.SetActionMessenger(_scoreManager.ShowAction);
         }
 
         /// <summary>

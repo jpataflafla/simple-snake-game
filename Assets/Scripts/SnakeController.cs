@@ -37,6 +37,7 @@ namespace SnakeGame
         private float _snakeSpeed = 1f;
         private float _snakeSpeedChangeTime = 1f;
         private float _snakeSpeedChangeAmount = 1.5f;
+        Action<string> _showActionName;
 
         public void Initialize(SpriteRenderer[,] boardTiles, int startTileRowIndex,
             int startTileColumnIndex, Direction startHeadDirection,
@@ -60,6 +61,10 @@ namespace SnakeGame
 
             MoveHead(startHeadDirection);
             _snake.ForEach(i => MoveSnake(startHeadDirection));
+        }
+        public void SetActionMessenger(Action<string> showAction)
+        {
+            _showActionName = showAction;
         }
 
         public void MoveHead(Direction headDirection)
@@ -180,6 +185,9 @@ namespace SnakeGame
             tail.SpriteRenderer.transform.SetAsLastSibling();
 
             OnSizeChange?.Invoke(1);
+
+            // Left for debug purposes
+            _showActionName("Delicious!");
         }
 
         public void RemoveSegment()
@@ -197,12 +205,18 @@ namespace SnakeGame
             tail.SpriteRenderer.transform.SetAsLastSibling();
 
             OnSizeChange?.Invoke(-1);
+
+            // Left for debug purposes
+            _showActionName("yuck, not good..");
         }
 
         private void GameOver()
         {
             StopSnakeMovement(forceStopCoroutine: true);
             OnSnakeDead?.Invoke();
+
+            // Left for debug purposes
+            _showActionName("GAME OVER");
         }
 
         public void SpeedUpAction()
@@ -213,6 +227,9 @@ namespace SnakeGame
             }
             ChangeSnakeSpeed(_initialSnakeSpeed);
             speedChange = StartCoroutine(SpeedChange(_snakeSpeedChangeTime, _snakeSpeedChangeAmount));
+            
+            // Left for debug purposes
+            _showActionName("I'm speeding up!");
         }
 
         public void SlowDownAction()
@@ -223,6 +240,9 @@ namespace SnakeGame
             }
             ChangeSnakeSpeed(_initialSnakeSpeed);
             speedChange = StartCoroutine(SpeedChange(_snakeSpeedChangeTime, 1f / _snakeSpeedChangeAmount));
+
+            // Left for debug purposes
+            _showActionName("I'm a snaaaaaaail..");
         }
 
         private IEnumerator SpeedChange(float snakeSpeedChangeTime, float snakeSpeedChangeAmount)
@@ -251,6 +271,9 @@ namespace SnakeGame
 
             MoveHead((_snake[0].SegmentOrientation));
             StartSnakeMovement(_initialSnakeSpeed);
+
+            // Left for debug purposes
+            _showActionName("..turn arooooound..");
         }
 
 
@@ -281,5 +304,6 @@ namespace SnakeGame
             spriteRenderer.transform.localScale = Vector3.one;
             return spriteRenderer;
         }
+
     }
 }
