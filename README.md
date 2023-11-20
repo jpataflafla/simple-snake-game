@@ -49,7 +49,7 @@ This Unity project serves as a prototype for a classic Snake game, with a focus 
 - **Canva**: Some basic sprites were created using Canva.
 - **Pixabay Sounds**: Free-to-use sounds from Pixabay to make game more playable even at prototype stage.
 - **DOTween**: Adds smooth animation and tweening capabilities, enhancing the visual prototype.
-- **New Unity Input System**: Implements the new Unity Input System for improved input handling.
+- **New Unity Input System**: This Unity prototype for a classic Snake game implements the new Unity Input System for enhanced input handling. Prioritizing simplicity, flexibility, and adaptability across diverse testing platforms, the UI features on-screen buttons for intuitive control and usability, especially on touch screens. The Unity Input System ensures compatibility with WASD, arrow keys, and other input methods, enhancing the overall user experience.
 
 ## Assets, Packages, custom solutions for future
 - **Localization Asset:** Localization package (i.e. I2 Localization or custom solution) to easily store and manage texts outside of the code, supporting various language versions etc.
@@ -66,3 +66,6 @@ This Unity project serves as a prototype for a classic Snake game, with a focus 
 ## Conclusion
 
 In conclusion, this Snake game prototype in Unity provides a solid foundation for experimentation and iteration. The emphasis on simplicity and flexibility, coupled with thoughtful design considerations, ensures a prototype that can easily adapt to different configurations. As the project progresses, further considerations, such as adopting a DI framework, can be explored to maintain clean and scalable code. 
+
+## LIVE DEMO
+[Snake game - LIVE DEMO](https://jakkoz.stronazen.pl/unitySnakeDemo/demo)

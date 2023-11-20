@@ -1,10 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Threading;
-using System.Xml.Serialization;
 using UnityEngine;
-using UnityEngine.UIElements;
 
 namespace SnakeGame
 {
@@ -78,6 +75,11 @@ namespace SnakeGame
             var previousOrientation = _snake[0].SegmentOrientation;
             _snake[0].MoveSegment(headDirection);
 
+            SetSnakeOrientation(previousIndices, previousOrientation);
+        }
+
+        private void SetSnakeOrientation(Vector2Int previousIndices, Direction previousOrientation)
+        {
             for (int i = 1; i < _snake.Count; i++)
             {
                 var currentIndices = _snake[i].Indices;
@@ -94,12 +96,18 @@ namespace SnakeGame
 
                 // Move the current segment to the position of the segment before it
                 _snake[i].SetPosition(previousIndices);
-                _snake[i].SetOrientation(previousOrientation);
 
+                // Set the orientation of the current segment based on the turning direction
+                if (previousOrientation != currentOrientation)
+                {
+                    _snake[i].SetOrientation(previousOrientation);
+                }
 
                 previousIndices = currentIndices;
                 previousOrientation = currentOrientation;
             }
+
+            SetTailOrientation();
         }
 
         public bool IsAnySnakeSegmentAtPosition(Vector2Int position)
@@ -157,6 +165,28 @@ namespace SnakeGame
                 }
             }
         }
+
+        /// <summary>
+        /// Set orientation in the direction of the last non tail element's position
+        /// </summary>
+        private void SetTailOrientation()
+        {
+            var lastBodyPartPosition = _snake[^2].Indices;
+            var tail = _snake[^1];
+
+            int dx = lastBodyPartPosition.x - tail.Indices.x;
+            int dy = lastBodyPartPosition.y - tail.Indices.y;
+
+            tail.SetOrientation((dx, dy) switch
+            {
+                (1, 0) => Direction.Up,
+                (0, -1) => Direction.Left,
+                (0, 1) => Direction.Right,
+                (-1, 0) => Direction.Down,
+                _ => tail.SegmentOrientation
+            });
+        }
+
         #endregion SnakeAutiomaticMovement
 
         public bool IsEatingItself()
@@ -255,7 +285,7 @@ namespace SnakeGame
         public void HeadTailSwapAction()
         {
             StopSnakeMovement(forceStopCoroutine: true);
-
+            
             int n = _snake.Count;
 
             for (int i = 0; i < n / 2; i++)
@@ -267,6 +297,12 @@ namespace SnakeGame
                 var tmpOrientation = _snake[n - 1 - i].SegmentOrientation;
                 _snake[n - 1 - i].SetOrientation(GetOppositeDirection(_snake[i].SegmentOrientation));
                 _snake[i].SetOrientation(GetOppositeDirection(tmpOrientation));
+
+                // Additional: Set the orientation of the middle element (if it exists) to the opposite direction
+                if (n % 2 == 1 && i == n / 2 - 1)
+                {
+                    _snake[i + 1].SetOrientation(GetOppositeDirection(_snake[i + 1].SegmentOrientation));
+                }
             }
 
             MoveHead((_snake[0].SegmentOrientation));
@@ -275,7 +311,6 @@ namespace SnakeGame
             // Left for debug purposes
             _showActionName("..turn arooooound..");
         }
-
 
         #endregion SnakeActions
 
