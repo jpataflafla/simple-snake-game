@@ -61,6 +61,7 @@ This Unity project serves as a prototype for a classic Snake game, with a focus 
 - **Game Manager Dependencies**: All parameters are exposed in the inspector on the game manager object, allowing for quick adjustments. Most of the interchangeable scripts, such as the audio manager, score manager, board generation, etc., are decoupled and implemented with interfaces. This approach allows for fast changes during the prototyping phase and makes it easier to integrate the game into a larger application.
 
 ![Local Image](/gameScreenRec/Screen_snake.png)
+![Local Image](/gameScreenRec/Screen_snake_40_by_40.png)
 ![Local Image](/gameScreenRec/gameView.png)
 
 ## Conclusion
