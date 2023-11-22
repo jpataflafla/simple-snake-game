@@ -4,6 +4,8 @@
 ### Main objectives
 A simple snake game created as part of a pre-employment test assignment for a Unity developer position.
 
+<b> Live demo - link available at the end of this document </b>
+
 ### Brief description of the game concept
 A simple game, based on well known comcept of "Snake" game ([Snake game - Wikipedia](https://en.wikipedia.org/wiki/Snake_(video_game_genre))),  where the player is responsible for changing the direction of the snake's head. The player must be careful not to cause the snake to collide with itself or other obstacles, which becomes more difficult with each elongation of the snake as a result of eating an edible item. According to the cited link, there are at least two popular versions of the game. This implementation is for the single-player version.
 
