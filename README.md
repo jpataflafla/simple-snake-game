@@ -71,4 +71,4 @@ This Unity project serves as a prototype for a classic Snake game, with a focus 
 In conclusion, this Snake game prototype in Unity provides a solid foundation for experimentation and iteration. The emphasis on simplicity and flexibility, coupled with thoughtful design considerations, ensures a prototype that can easily adapt to different configurations. As the project progresses, further considerations, such as adopting a DI framework, can be explored to maintain clean and scalable code. 
 
 ## LIVE DEMO
-[Snake game - LIVE DEMO](https://jakkoz.stronazen.pl/unitySnakeDemo)
+[Snake game - LIVE DEMO](https://trymvp.pl/unitySnakeDemo/)
